@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { Route, NavLink, Switch } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import './App.css';
-import UserCard from './UserCard';
+import UserList from './UserList';
+import UserDetailsPage from './UserDetailsPage';
 import { data } from './data';
 
 class App extends Component {
@@ -26,35 +27,26 @@ class App extends Component {
     const { users, region } = this.state;
 
     return (
-      <div>
-        Region:&nbsp;
-        <select
-          onChange={this.changeRegion}
-          className="select__change-region"
-        >
-          <option>All</option>
-          {
-            [...new Set(users.map(user => user.region))].map(
-              region => (
-                <option key={region}>
-                  {region}
-                </option>
-              )
-            )
-          }
-        </select>
+      <Switch>
+        <Route path="/" exact render={(params) => (
+            <UserList
+              users={users}
+              region={region}
+              changeRegion={this.changeRegion}
+              {...params}
+            />
+          )}
+        />
 
-        <div>
-          {
-            region === 'All'
-              ? users.map(user => <UserCard user={user} key={user.id}/>)
-              
-              : users
-                  .filter(user => user.region === region)
-                  .map(user => <UserCard user={user} key={user.id}/>)
-          }
-        </div>
-      </div>
+        <Route path="/:userId" render={(params) => (
+            <UserDetailsPage
+              users={users}
+              {...params}
+            />
+          )}
+        />
+      </Switch>
+
     );
   }
 }
